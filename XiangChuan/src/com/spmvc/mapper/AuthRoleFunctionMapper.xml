@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spmvc.dao.AuthRoleFunctionDao">
+	<select id="getIsGrantRoleFunction" parameterType="java.util.Map" resultType="Integer">
+		SELECT COUNT(auth_role_id) FROM auth_role_function WHERE auth_function_id IN (#{auth_function_id}) AND auth_role_id = #{auth_role_id}
+	</select>
+	
+	<delete id="deleteGrantRoleFunction" parameterType="Integer">
+		delete from auth_role_function where auth_role_id = #{auth_role_id}
+	</delete>
+	
+	<insert id="insertGrantRoleFunction" parameterType="java.util.Map">
+		insert into auth_role_function (auth_role_id, auth_function_id) values (#{auth_role_id},#{auth_function_id})
+	</insert>
+	
+	<select id="getAuthRoleFunctionById" parameterType="Integer" resultType="java.util.Map">
+		select a.auth_function_id,a.auth_function_name,IF(ISNULL(b.auth_function_id),0,1) auth_function_status from auth_function a left join(select auth_function_id from auth_role_function where auth_role_id=#{auth_role_id}) b on a.auth_function_id=b.auth_function_id
+	</select>
+</mapper>

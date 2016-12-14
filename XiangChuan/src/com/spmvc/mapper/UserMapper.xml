@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spmvc.dao.UserDao">
+	<!-- 通过用户名和密码查询 -->
+	<select id="getUser" parameterType="com.spmvc.model.Auth_User" resultType="com.spmvc.model.Auth_User">
+		select *from auth_user where auth_user_name=#{auth_user_name} and auth_user_pwd=#{auth_user_pwd}
+	</select>
+	<!--通过用户id查询url-->
+	<select id="getAuthFunctionUrl" parameterType="com.spmvc.model.Auth_User" resultType="String">
+		SELECT auth_function_url FROM auth_user_role a, auth_role_function b, auth_function c WHERE a.auth_user_id = #{auth_user_id} AND a.auth_role_id = b.auth_role_id AND b.auth_function_id = c.auth_function_id
+	</select>
+</mapper>

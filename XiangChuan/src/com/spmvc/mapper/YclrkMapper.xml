@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spmvc.dao.YclrkDao">
+	<!-- 查询原材料入库,三表联查 -->
+	<select id="getYclrk" resultType="java.util.Map">
+		SELECT a.yclrk_no,a.yclrk_material_name,b.khmc_name,c.gcmc_name,a.yclrk_standard_width,a.yclrk_standard_height,a.yclrk_time,a.yclrk_amount,a.yclrk_shelves,a.yclrk_barcode_iscreate FROM yclrk a, khmc b, gcmc c WHERE <!-- a.khmc_id = b.khmc_id AND --> b.khmc_id = c.khmc_id AND a.gcmc_id=c.gcmc_id
+	</select>
+	<!-- 查询原材料入库表的用于条形码的数据 -->
+	<select id="getYclrkBarcodeForMap" parameterType="String" resultType="java.util.Map">
+		select yclrk_id,khmc_id,gcmc_id,yclrk_standard_width,yclrk_standard_height,yclrk_amount from yclrk where yclrk_no=#{yclrk_no}
+	</select>
+	<!--是否生成条形码的状态更新 为是 -->
+	<update id="updateYclrkById" parameterType="java.util.Map">
+		update yclrk set yclrk_barcode=#{yclrk_barcode},yclrk_barcode_iscreate=#{yclrk_barcode_iscreate} where yclrk_id=#{yclrk_id}
+	</update>
+	<!-- 查询条形码的路径 -->
+	<select id="getYclrkBarcode" parameterType="int" resultType="String">
+		select yclrk_barcode from yclrk where yclrk_no=#{yclrk_no}
+	</select>
+</mapper>

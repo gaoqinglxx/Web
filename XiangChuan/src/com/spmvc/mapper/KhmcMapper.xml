@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spmvc.dao.KhmcDao">
+	<!-- 查询全部客户 -->
+	<select id="getKhmc" resultType="com.spmvc.model.Khmc">
+		select *from khmc
+	</select>
+	<!-- 添加客户 -->
+	<insert id="addKhmc" parameterType="String">
+		insert into khmc(khmc_name) values(#{khmc_name})
+	</insert>
+	<!-- 更新客户 -->
+	<update id="updateKhmc" parameterType="java.util.Map">
+		update khmc set khmc_name=#{khmc_name} where khmc_id=#{khmc_id}
+	</update>
+	<!-- 删除客户 -->
+	<delete id="deleteKhmc" parameterType="int">
+		delete from khmc where khmc_id=#{khmc_id}
+	</delete>
+</mapper>
