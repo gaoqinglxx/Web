@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+        <context:component-scan base-package="spmvc.Dao"></context:component-scan>
+        <context:property-placeholder location="classpath:jdbc.properties"/>
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"  destroy-method="close"
+       		p:driverClassName="${mysql.driver}"
+       		p:url="${mysql.url}"
+       		p:username="${mysql.username}"
+       		p:password="${mysql.password}"        
+        ></bean>
+		<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"
+			p:dataSource-ref="dataSource"
+		></bean>
+		<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="dataSource"></bean>
+	<aop:config>
+		<aop:pointcut expression="execution(* com.spmvc.service.*.*(..))" id="myPointCut"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="myPointCut"/>
+	</aop:config>
+	
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED"/>
+			<tx:method name="update*" propagation="REQUIRED"/>
+			<tx:method name="del*" propagation="REQUIRED"/>
+			<tx:method name="get*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>     
+	<!-- Spring容器来管理MyBatis的SqlSessionFactory -->
+	<!-- 必须加入属性的配置, dataSource 和 mapperLoactions -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:spmvc/mapper/*.xml"></property>
+	</bean>
+	
+	<!-- 利用Spring来扫描MyBatis的Dao -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="spmvc.Dao"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+</beans>
